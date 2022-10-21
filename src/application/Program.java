@@ -2,7 +2,6 @@ package application;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Locale;
 import java.util.Scanner;
 
 import model.entities.CarRental;
@@ -13,34 +12,36 @@ import model.services.RentalService;
 public class Program {
 
 	public static void main(String[] args) {
-		Locale.setDefault(Locale.US);
 		Scanner sc = new Scanner(System.in);
-
 		DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
-
-		System.out.println("*** DADOS DE ALUGUEIS DE CARROS ***");
-		System.out.print("INFORME O MODELO DO CARRO: ");
-		String carModel = sc.nextLine();
-		System.out.print("INFORME A DATA E HORA DA RETIRADA(dd/MM/yyyy HH:mm): ");
-		LocalDateTime start = LocalDateTime.parse(sc.nextLine(), fmt);
-		System.out.print("INFORME A DATA E HORA DA DEVOLUÇÃO(dd/MM/yyyy HH:mm): ");
-		LocalDateTime finish = LocalDateTime.parse(sc.nextLine(), fmt);
-
-		CarRental cr = new CarRental(start, finish, new Vehicle(carModel));
 		
-		System.out.print("INFORME O PREÇO POR HORA U$: ");
+		System.out.println("*** DADOS DE ALUGUEIS DE CARROS ***");
+		System.out.println("---------------------------------------------------------------");
+		System.out.print("INFORME O MODELO DO CARRO: ");
+		String model = sc.nextLine();
+		System.out.print("INFORME A DATA DA RETIRADA(dd/MM/yyyy HH:mm): ");
+		LocalDateTime start = LocalDateTime.parse(sc.nextLine(), fmt);
+		System.out.print("INFORME A DATA DA DEVOLUÇÃO(dd/MM/yyyy HH:mm): ");
+		LocalDateTime finish = LocalDateTime.parse(sc.nextLine(), fmt);
+		
+		CarRental carRental = new CarRental(start, finish, new Vehicle(model));
+		
+		System.out.print("INFORME O PREÇO POR HORA: R$");
 		double pricePerHour = sc.nextDouble();
-		System.out.print("INFORME O PREÇO POR DIA U$: ");
+		System.out.print("INFORME O PREÇO POR DIA: R$");
 		double pricePerDay = sc.nextDouble();
 		
 		RentalService rentalService = new RentalService(pricePerHour, pricePerDay, new BrazilTaxService());
 		
-		rentalService.processInvoice(cr);
+		rentalService.processInvoice(carRental);
 		
+		System.out.println("");
 		System.out.println("FATURA: ");
-		System.out.println("PAGAMENTO BASICO: " + String.format("U$%.2f", cr.getInvoice().getBasicPayment()));
-		System.out.println("IMPOSTO: " + String.format("U$%.2f", cr.getInvoice().getTax()));
-		System.out.println("PAGAMENTO TOTAL: " + String.format("U$%.2f", cr.getInvoice().getTotalPayment()));
+		System.out.println("---------------------------------------------------------------");
+		System.out.println("MODELO DO CARRO ALUGADO: " + model.toUpperCase());
+		System.out.println("PAGAMENTO BASICO: " + String.format("R$%.2f", carRental.getInvoice().getBasicPayment()));
+		System.out.println("IMPOSTO: " + String.format("R$%.2f", carRental.getInvoice().getTax()));
+		System.out.println("PAGAMENTO TOTAL: " + String.format("R$%.2f", carRental.getInvoice().totalPayment()));
 		
 		sc.close();
 	}
